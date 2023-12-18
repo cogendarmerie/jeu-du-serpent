@@ -24,7 +24,6 @@ window.onload = function (){
         //Context
         ctx = canvas.getContext('2d');
         showStart();
-        // launch();
     }
 
     function launch(){
@@ -38,57 +37,50 @@ window.onload = function (){
 
     function refreshCanvas(){
         snake.advance();
+        //Verifier si le serpent est entrer en collision
         if(snake.checkCollision()){
             gameOver();
-        } else {
-            if(snake.isEatingApple(apple)) {
-                score++;
-                snake.ateApple = true;
-                do {
-                    apple.setNewPosition();
-                } while(apple.isOnSnake(snake))
-                if(score % 5 === 0){
-                    speedUp();
-                }
-            }
-            ctx.clearRect(0,0,canvasWidth, canvasHeight);
-            drawScore();
-            snake.draw();
-            apple.draw();
-            timeout = setTimeout(refreshCanvas, delay);
+            return;
         }
+        //Verifier si le serpent a manger une pomme
+        if(snake.isEatingApple(apple)) {
+            score++;
+            snake.ateApple = true;
+            do {
+                apple.setNewPosition();
+            } while(apple.isOnSnake(snake))
+            if(score % 5 === 0){
+                speedUp();
+            }
+        }
+        ctx.clearRect(0,0,canvasWidth, canvasHeight);
+        drawScore();
+        snake.draw();
+        apple.draw();
+        timeout = setTimeout(refreshCanvas, delay);
+    }
+
+    function write(text, font, position){
+        ctx.save();
+        ctx.font = font;
+        ctx.fillStyle = 'black';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.strokeStyle = 'white';
+        ctx.lineWidth = '5';
+        ctx.strokeText(text, position[0], position[1]);
+        ctx.fillText(text, position[0], position[1]);
+        ctx.restore();
     }
 
     function gameOver(){
-        ctx.save();
-        ctx.font = 'bold 70px sans-serif';
-        ctx.fillStyle = 'black';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.strokeStyle = 'white';
-        ctx.lineWidth = '5';
-        ctx.strokeText("Game Over", centreX, centreY - 180);
-        ctx.fillText("Game Over", centreX, centreY - 180);
-        ctx.font = 'bold 30px sans-serif';
-        ctx.strokeText('Appuyer sur la touche espace pour rejouer', centreX, centreY - 120);
-        ctx.fillText('Appuyez sur la touche espace pour rejouer', centreX, centreY - 120);
-        ctx.restore();
+        write('Game Over', 'bold 70px sans-serif', [centreX, centreY - 180]);
+        write('Appuyer sur espace pour rejouer', 'bold 30px sans-serif', [centreX, centreY - 120]);
     }
 
     function showStart(){
-        ctx.save();
-        ctx.font = 'bold 70px sans-serif';
-        ctx.fillStyle = 'black';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.strokeStyle = 'white';
-        ctx.lineWidth = '5';
-        ctx.strokeText('Jeu du serpent', centreX, centreY - 180);
-        ctx.fillText('Jeu du serpent', centreX, centreY - 180);
-        ctx.font = 'bold 30px sans-serif';
-        ctx.strokeText('Appuyer sur espace pour jouer', centreX, centreY - 120);
-        ctx.fillText('Appuyer sur espace pour jouer', centreX, centreY - 120);
-        ctx.restore();
+        write('Jeu du serpent', 'bold 70px sans-serif', [centreX, centreY - 180]);
+        write('Appuyer sur espace pour jouer', 'bold 30px sans-serif', [centreX, centreY - 120]);
     }
 
     function drawScore() {
@@ -181,13 +173,10 @@ window.onload = function (){
             const maxY = heightInBlocks-1;
             const isNotBetweenHorizontalWalls = snakeX < minX || snakeX > maxX;
             const isNotBetweenVerticalWalls = snakeY < minY || snakeY > maxY;
-            if(isNotBetweenHorizontalWalls || isNotBetweenVerticalWalls){
-                wallCollision = true;
-            }
+
+            wallCollision = isNotBetweenHorizontalWalls || isNotBetweenVerticalWalls;
             for(let i = 0;i < rest.length;i++){
-                if(snakeX === rest[i][0] && snakeY === rest[i][1]){
-                    snakeCollision = true;
-                }
+                snakeCollision = snakeX === rest[i][0] && snakeY === rest[i][1];
             }
             return wallCollision || snakeCollision;
         };
@@ -218,25 +207,31 @@ window.onload = function (){
         this.isOnSnake = function(snakeToCheck){
             let isOnSnake = false;
             for(let i = 0;i < snakeToCheck.body.length;i++){
-                if(this.position[0] === snakeToCheck.body[i][0] && this.position[1] === snakeToCheck.body[i][1]){
-                    isOnSnake = true;
-                }
+                isOnSnake = this.position[0] === snakeToCheck.body[i][0] && this.position[1] === snakeToCheck.body[i][1];
             }
             return isOnSnake;
         };
     }
 
     window.addEventListener('keyup', function (e){
-        if(e.code === 'ArrowLeft'){
-            snake.setDirection('left');
-        } else if (e.code === 'ArrowUp') {
-            snake.setDirection('up');
-        } else if (e.code === 'ArrowRight') {
-            snake.setDirection('right');
-        } else if(e.code === 'ArrowDown') {
-            snake.setDirection('down');
-        } else if (e.code === 'Space') {
-            launch();
+        let direction;
+        switch (e.code){
+            case 'ArrowLeft':
+                direction = 'left';
+                break;
+            case 'ArrowRight':
+                direction = 'right';
+                break;
+            case 'ArrowDown':
+                direction = 'down';
+                break;
+            case 'ArrowUp':
+                direction = 'up';
+                break;
+            case 'Space':
+                launch();
+                return;
         }
+        snake.setDirection(direction);
     });
 }
