@@ -173,15 +173,10 @@ window.onload = function (){
             const maxY = heightInBlocks-1;
             const isNotBetweenHorizontalWalls = snakeX < minX || snakeX > maxX;
             const isNotBetweenVerticalWalls = snakeY < minY || snakeY > maxY;
-            // if(isNotBetweenHorizontalWalls || isNotBetweenVerticalWalls){
-            //     wallCollision = true;
-            // }
+
             wallCollision = isNotBetweenHorizontalWalls || isNotBetweenVerticalWalls;
             for(let i = 0;i < rest.length;i++){
                 snakeCollision = snakeX === rest[i][0] && snakeY === rest[i][1];
-                // if(snakeX === rest[i][0] && snakeY === rest[i][1]){
-                //     snakeCollision = true;
-                // }
             }
             return wallCollision || snakeCollision;
         };
@@ -212,9 +207,7 @@ window.onload = function (){
         this.isOnSnake = function(snakeToCheck){
             let isOnSnake = false;
             for(let i = 0;i < snakeToCheck.body.length;i++){
-                if(this.position[0] === snakeToCheck.body[i][0] && this.position[1] === snakeToCheck.body[i][1]){
-                    isOnSnake = true;
-                }
+                isOnSnake = this.position[0] === snakeToCheck.body[i][0] && this.position[1] === snakeToCheck.body[i][1];
             }
             return isOnSnake;
         };
