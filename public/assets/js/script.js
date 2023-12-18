@@ -173,13 +173,15 @@ window.onload = function (){
             const maxY = heightInBlocks-1;
             const isNotBetweenHorizontalWalls = snakeX < minX || snakeX > maxX;
             const isNotBetweenVerticalWalls = snakeY < minY || snakeY > maxY;
-            if(isNotBetweenHorizontalWalls || isNotBetweenVerticalWalls){
-                wallCollision = true;
-            }
+            // if(isNotBetweenHorizontalWalls || isNotBetweenVerticalWalls){
+            //     wallCollision = true;
+            // }
+            wallCollision = isNotBetweenHorizontalWalls || isNotBetweenVerticalWalls;
             for(let i = 0;i < rest.length;i++){
-                if(snakeX === rest[i][0] && snakeY === rest[i][1]){
-                    snakeCollision = true;
-                }
+                snakeCollision = snakeX === rest[i][0] && snakeY === rest[i][1];
+                // if(snakeX === rest[i][0] && snakeY === rest[i][1]){
+                //     snakeCollision = true;
+                // }
             }
             return wallCollision || snakeCollision;
         };
@@ -219,16 +221,24 @@ window.onload = function (){
     }
 
     window.addEventListener('keyup', function (e){
-        if(e.code === 'ArrowLeft'){
-            snake.setDirection('left');
-        } else if (e.code === 'ArrowUp') {
-            snake.setDirection('up');
-        } else if (e.code === 'ArrowRight') {
-            snake.setDirection('right');
-        } else if(e.code === 'ArrowDown') {
-            snake.setDirection('down');
-        } else if (e.code === 'Space') {
-            launch();
+        let direction;
+        switch (e.code){
+            case 'ArrowLeft':
+                direction = 'left';
+                break;
+            case 'ArrowRight':
+                direction = 'right';
+                break;
+            case 'ArrowDown':
+                direction = 'down';
+                break;
+            case 'ArrowUp':
+                direction = 'up';
+                break;
+            case 'Space':
+                launch();
+                return;
         }
+        snake.setDirection(direction);
     });
 }
