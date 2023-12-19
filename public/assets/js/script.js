@@ -45,7 +45,7 @@ window.onload = function (){
         //Verifier si le serpent a manger une pomme
         if(snake.isEatingApple(apple)) {
             score++;
-            snake.ateApple = true;
+            snake.eatApple = true;
             do {
                 apple.setNewPosition();
             } while(apple.isOnSnake(snake))
@@ -107,7 +107,7 @@ window.onload = function (){
     function Snake(body, direction){
         this.body = body;
         this.direction = direction;
-        this.ateApple = false;
+        this.eatApple = false;
         this.draw = function (){
             ctx.save();
             ctx.fillStyle = "green";
@@ -135,10 +135,10 @@ window.onload = function (){
                     throw('Invalid Direction');
             }
             this.body.unshift(nextPosition);
-            if(!this.ateApple)
+            if(!this.eatApple)
                 this.body.pop();
             else
-                this.ateApple = false;
+                this.eatApple = false;
         };
 
         this.setDirection = function (newDirection){
