@@ -6,8 +6,6 @@ window.onload = function (){
     const centreY = canvasHeight / 2;
     const widthInBlocks = canvasWidth/blockSize;
     const heightInBlocks = canvasHeight/blockSize;
-    let loose = false;
-    let duration = 30;
     let speed = 100;
     let timeout;
     let score = 0; // Millisecond
@@ -15,6 +13,7 @@ window.onload = function (){
     let snake;
     let ctx;
     let badAppleEatCount = 0;
+    let alertTimeout;
 
     init();
     function init() {
@@ -31,15 +30,35 @@ window.onload = function (){
         snake = new Snake([[6,4],[5,4],[4,4],[3,4],[2,4]], "right");
         apple = new Apple([10, 10]);
         score = 0;
+        badAppleEatCount = 0;
         clearTimeout(timeout);
         delay = 100;
         refreshCanvas();
+    }
+
+    function showAlert(content, persist = 14000){
+        const alert = document.getElementById('alert');
+        alert.querySelector("p").innerHTML = content;
+        alert.classList.add('show');
+        clearTimeout(alertTimeout);
+        alertTimeout = setTimeout(() => {
+            alert.classList.remove('show');
+        }, persist);
     }
 
     function refreshCanvas(){
         snake.advance();
         //Verifier si le serpent est entrer en collision
         if(snake.checkCollision()){
+            const phrases = ['Les murs sont comme les limites du serpent : elles sont là pour lui rappeler qu\'il doit rester dans le game.', 'Quand le serpent rencontre le mur, c\'est comme une discussion entre un perroquet et une porte - ça ne mène nulle part !', 'Hé, serpent, les murs ne sont pas des partenaires de danse, laisse-les tranquilles !', 'Le serpent pense que les murs sont comme des côtes flottantes : ils bougent quand il s\'approche un peu trop près.', 'On dirait que le serpent a choisi les murs comme ses partenaires de jeu préférés. Il ne cesse de les fréquenter !', 'Si seulement les murs pouvaient parler, ils raconteraient des histoires incroyables sur le nombre de fois où ce serpent est venu dire bonjour.'];
+            showAlert(phrases[Math.floor(Math.random() * phrases.length)]);
+            gameOver();
+            return;
+        }
+        //Verifiier si le serpent se rentre dans lui meme
+        if(snake.checkSelfCollision()){
+            const phrases = ["Erreur de direction : queue n'est pas au menu!", "Je mords ma queue... encore? C'est du réchauffé!", "Serpent dans un dilemme auto-dévorant!", "Se mordre la queue : pas le meilleur plan, serpy!"];
+            showAlert(phrases[Math.floor(Math.random() * phrases.length)]);
             gameOver();
             return;
         }
@@ -47,12 +66,12 @@ window.onload = function (){
         if(snake.isEatingApple(apple)) {
             if(apple.bad===1){
                 badAppleEatCount++;
-                if(badAppleEatCount >= 4 || score<=0){
-                    write('Votre serpent a mal au ventre', 'bold 16px sans-serif', [centreX, centreY - 60]);
+                score--;
+                if(badAppleEatCount >= 3 || score<=0){
+                    const phrases = ["Alerte à la surdose de dégoût : le serpent a abusé des pommes pourries!", "Quelque chose me dit que ce serpent a un goût pour le mauvais fruit!", "Vous aviez été mis en garde : manger des pommes pourries, c'est comme danser avec un rhinocéros... ça peut vous laisser des séquelles !", "Répéter que les pommes pourries ne sont pas comestibles, c'est comme répéter à un chat qu'il ne devrait pas chasser les licornes. Ça devrait être évident, mais apparemment, on insiste !"];
+                    showAlert(phrases[Math.floor(Math.random() * phrases.length)]);
                     gameOver();
                     return;
-                } else {
-                    score--;
                 }
             } else {
                 score++;
@@ -98,7 +117,7 @@ window.onload = function (){
     function drawScore() {
         ctx.save();
         ctx.font = 'bold 200px sans-serif';
-        ctx.fillStyle = 'gray';
+        ctx.fillStyle = '#5ab778';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText(score.toString(), centreX, centreY);
@@ -171,6 +190,17 @@ window.onload = function (){
                 this.direction = newDirection;
             }
         };
+        //Verifier si le serpent est entrer en collision avec lui meme
+        this.checkSelfCollision = function() {
+            const head = this.body[0];
+            for(let i = 1; i < this.body.length; i++) {
+                const segment = this.body[i];
+                if(head[0] === segment[0] && head[1] === segment[1]) {
+                    return true;
+                }
+            }
+            return false;
+        };
         //Verifier si le serpent est entrer en collision
         this.checkCollision = function(){
             let wallCollision = false;
@@ -221,6 +251,13 @@ window.onload = function (){
             if(this.bad === 1){
                 setTimeout(()=>{
                     this.bad = 0;
+                }, Math.floor(Math.random() * 4000));
+            } else {
+                setTimeout(()=>{
+                    this.bad = 1;
+                    setTimeout(()=>{
+                        this.bad = 0;
+                    }, Math.floor(Math.random() * 4000));
                 }, Math.floor(Math.random() * 4000));
             }
             return this.bad;

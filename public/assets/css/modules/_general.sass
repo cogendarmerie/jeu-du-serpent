@@ -30,3 +30,25 @@ h1
 
 p
   margin-top: 8px
+
+
+//Alert
+.alert-danger
+  position: fixed
+  display: flex
+  flex-direction: column
+  justify-content: center
+  align-items: center
+  top: 0
+  left: 0
+  right: 0
+  padding: 24px 32px
+  background-color: #750D37
+  color: white
+  transition: all .25s ease
+
+  &:not(.show)
+    transform: translateY(-100%)
+
+  p
+    margin: 0
