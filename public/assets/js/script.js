@@ -14,6 +14,7 @@ window.onload = function (){
     let apple;
     let snake;
     let ctx;
+    let badAppleEatCount = 0;
 
     init();
     function init() {
@@ -44,7 +45,18 @@ window.onload = function (){
         }
         //Verifier si le serpent a manger une pomme
         if(snake.isEatingApple(apple)) {
-            score++;
+            if(apple.bad===1){
+                badAppleEatCount++;
+                if(badAppleEatCount >= 4 || score<=0){
+                    write('Votre serpent a mal au ventre', 'bold 16px sans-serif', [centreX, centreY - 60]);
+                    gameOver();
+                    return;
+                } else {
+                    score--;
+                }
+            } else {
+                score++;
+            }
             snake.eatApple = true;
             do {
                 apple.setNewPosition();
@@ -188,21 +200,36 @@ window.onload = function (){
 
     function Apple(position){
         this.position = position;
+        this.bad = false;
         this.draw = function(){
             const radius = blockSize / 2;
             const x = this.position[0] * blockSize + radius;
             const y = this.position[1] * blockSize + radius;
             ctx.save();
-            ctx.fillStyle = "red";
+            if(this.bad === 1){
+                ctx.fillStyle = "black";
+            } else {
+                ctx.fillStyle = "red";
+            }
             ctx.beginPath();
             ctx.arc(x,y, radius, 0, Math.PI*2, true);
             ctx.fill();
             ctx.restore();
         };
+        this.badApple = function(){
+            this.bad = Math.floor(Math.random() * 2);
+            if(this.bad === 1){
+                setTimeout(()=>{
+                    this.bad = 0;
+                }, Math.floor(Math.random() * 4000));
+            }
+            return this.bad;
+        }
         this.setNewPosition = function(){
             const newX = Math.round(Math.random() * (widthInBlocks - 1));
             const newY = Math.round(Math.random() * (heightInBlocks - 1));
             this.position = [newX,newY];
+            this.bad = this.badApple();
         };
         this.isOnSnake = function(snakeToCheck){
             let isOnSnake = false;
