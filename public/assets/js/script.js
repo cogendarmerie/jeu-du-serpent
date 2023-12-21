@@ -21,7 +21,7 @@ window.onload = function (){
         const canvas = document.createElement("canvas");
         canvas.width = canvasWidth;
         canvas.height = canvasHeight;
-        document.body.appendChild(canvas);
+        document.querySelector('#container').appendChild(canvas);
         //Context
         ctx = canvas.getContext('2d');
         showStart();
