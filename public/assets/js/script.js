@@ -1,4 +1,11 @@
 window.onload = function (){
+    //begin:intro
+    document.querySelector("#intro button").addEventListener("click", function(e){
+        e.preventDefault();
+        document.getElementById("intro").classList.add("hidden");
+    });
+    // end:intro
+
     const canvasHeight = 600;
     const canvasWidth = 900;
     let blockSize = 30;
