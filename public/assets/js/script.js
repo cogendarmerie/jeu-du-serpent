@@ -6,6 +6,15 @@ window.onload = function (){
     });
     // end:intro
 
+    //begin::clock
+    const clock = document.querySelector('#clock');
+    clock.innerHTML = new Date().toLocaleTimeString();
+    //Afficher l'heure en temps reel
+    setInterval(function(){
+        clock.innerHTML = new Date().toLocaleTimeString();
+    }, 1000);
+    // end::clock
+
     const canvasHeight = 600;
     const canvasWidth = 900;
     let blockSize = 30;

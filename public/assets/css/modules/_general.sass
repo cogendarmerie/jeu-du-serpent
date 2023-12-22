@@ -21,14 +21,50 @@ body
   font-family: "Degular", Arial
   font-weight: normal
   color: $color-black
-  background-color: $color-background
+  background-color: $color-green-light
   height: 100vh
   overflow: hidden
+
+nav
+  position: fixed
+  bottom: 0
+  left: 0
+  right: 0
+  height: 2.5rem
+  background-color: $color-purple
+  display: flex
+  flex-direction: row
+  align-items: center
+  justify-content: space-between
+  padding: 4px
+
+  #clock
+    color: white
+    padding: 8px 12px
+    border: 1px solid $color-black
+
+  .nav-item
+    display: flex
+    flex-direction: row
+    align-items: center
+    gap: 8px
+    color: white
+    cursor: pointer
+    padding: 8px 12px
+    border: 1px solid $color-black
+
+    &.active
+      font-weight: bold
+      background-color: rgba(white, .9)
+      color: $color-purple
+      box-shadow: inset 2px 2px 0 0 $color-black
+
+
 
 .powered-by
   position: fixed
   right: 25px
-  bottom: 25px
+  bottom: 50px
   height: 80px
 
 h1
