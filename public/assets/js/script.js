@@ -35,6 +35,7 @@ window.onload = function (){
     let ctx;
     let badAppleEatCount = 0;
     let alertTimeout;
+    let gameInProgress = false;
 
     init();
     function init() {
@@ -52,6 +53,7 @@ window.onload = function (){
         apple = new Apple([10, 10]);
         score = 0;
         badAppleEatCount = 0;
+        gameInProgress = true;
         clearTimeout(timeout);
         delay = 100;
         refreshCanvas();
@@ -128,6 +130,7 @@ window.onload = function (){
     function gameOver(){
         write('Game Over', 'bold 70px sans-serif', [centreX, centreY - 180]);
         write('Appuyer sur espace pour rejouer', 'bold 30px sans-serif', [centreX, centreY - 120]);
+        gameInProgress = false;
     }
 
     function showStart(){
@@ -314,7 +317,9 @@ window.onload = function (){
                 direction = 'up';
                 break;
             case 'Space':
-                launch();
+                if(!gameInProgress){
+                    launch();
+                }
                 return;
         }
         snake.setDirection(direction);
