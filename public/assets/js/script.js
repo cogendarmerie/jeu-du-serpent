@@ -255,7 +255,7 @@ window.onload = function (){
             if(this.bad === 1){
                 ctx.fillStyle = "#210124";
             } else {
-                ctx.fillStyle = "#750D37";
+                ctx.fillStyle = "red";
             }
             ctx.beginPath();
             ctx.arc(x,y, radius, 0, Math.PI*2, true);
