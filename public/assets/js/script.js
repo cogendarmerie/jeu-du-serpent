@@ -158,148 +158,150 @@ window.onload = function (){
         ctx.fillRect(x, y, blockSize, blockSize);
     }
 
-    //Draw Snake
-    function Snake(body, direction){
-        this.body = body;
-        this.direction = direction;
-        this.eatApple = false;
-        this.draw = function (){
+    class Snake {
+        constructor(body, direction) {
+            this.body = body;
+            this.direction = direction;
+            this.eatApple = false;
+        }
+
+        draw() {
             ctx.save();
-            ctx.fillStyle = "green";
-            for(let i = 0; i < body.length; i++){
-                drawBlock(ctx, this.body[i]);
+            ctx.fillStyle = 'green';
+            for (let i = 0; i < this.body.length; i++) {
+                const [x, y] = this.body[i];
+                ctx.fillRect(x * blockSize, y * blockSize, blockSize, blockSize);
             }
             ctx.restore();
         }
-        this.advance = function (){
+
+        advance() {
             const nextPosition = this.body[0].slice();
-            switch (this.direction){
-                case "left":
+            switch (this.direction) {
+                case 'left':
                     nextPosition[0]--;
                     break;
-                case "right":
+                case 'right':
                     nextPosition[0]++;
                     break;
-                case "up":
+                case 'up':
                     nextPosition[1]--;
                     break;
-                case "down":
+                case 'down':
                     nextPosition[1]++;
                     break;
                 default:
-                    throw('Invalid Direction');
+                    throw ('Invalid Direction');
             }
             this.body.unshift(nextPosition);
-            if(!this.eatApple)
+            if (!this.eatApple)
                 this.body.pop();
             else
                 this.eatApple = false;
-        };
+        }
 
-        this.setDirection = function (newDirection){
+        setDirection(newDirection) {
             let allowedDirections;
-            switch (this.direction){
-                case "left":
-                case "right":
+            switch (this.direction) {
+                case 'left':
+                case 'right':
                     allowedDirections = ['up', 'down'];
                     break;
-                case "down":
-                case "up":
+                case 'down':
+                case 'up':
                     allowedDirections = ['left', 'right'];
                     break;
                 default:
-                    throw('Invalid direction');
+                    throw ('Invalid direction');
             }
-            if(allowedDirections.indexOf(newDirection) > -1){
+            if (allowedDirections.indexOf(newDirection) > -1) {
                 this.direction = newDirection;
             }
-        };
-        //Verifier si le serpent est entrer en collision avec lui meme
-        this.checkSelfCollision = function() {
+        }
+
+        checkSelfCollision() {
             const head = this.body[0];
-            for(let i = 1; i < this.body.length; i++) {
+            for (let i = 1; i < this.body.length; i++) {
                 const segment = this.body[i];
-                if(head[0] === segment[0] && head[1] === segment[1]) {
+                if (head[0] === segment[0] && head[1] === segment[1]) {
                     return true;
                 }
             }
             return false;
-        };
-        //Verifier si le serpent est entrer en collision
-        this.checkCollision = function(){
-            let wallCollision = false;
-            let snakeCollision = false;
+        }
+
+        checkCollision() {
             const head = this.body[0];
-            const rest = this.body.slice(1);
             const snakeX = head[0];
             const snakeY = head[1];
-            const minX = 0;
-            const minY = 0;
-            const maxX = widthInBlocks-1;
-            const maxY = heightInBlocks-1;
-            const isNotBetweenHorizontalWalls = snakeX < minX || snakeX > maxX;
-            const isNotBetweenVerticalWalls = snakeY < minY || snakeY > maxY;
+            const isNotBetweenHorizontalWalls = snakeX < 0 || snakeX >= widthInBlocks;
+            const isNotBetweenVerticalWalls = snakeY < 0 || snakeY >= heightInBlocks;
 
-            wallCollision = isNotBetweenHorizontalWalls || isNotBetweenVerticalWalls;
-            for(let i = 0;i < rest.length;i++){
-                snakeCollision = snakeX === rest[i][0] && snakeY === rest[i][1];
-            }
-            return wallCollision || snakeCollision;
-        };
-        this.isEatingApple = function(appleToEat){
+            return isNotBetweenHorizontalWalls || isNotBetweenVerticalWalls || this.checkSelfCollision();
+        }
+
+        isEatingApple(appleToEat) {
             const head = this.body[0];
             return head[0] === appleToEat.position[0] && head[1] === appleToEat.position[1];
-        };
+        }
     }
 
-    function Apple(position){
-        this.position = position;
-        this.bad = false;
-        this.draw = function(){
+    class Apple {
+        constructor(position) {
+            this.position = position;
+            this.bad = false;
+        }
+
+        draw() {
             const radius = blockSize / 2;
-            const x = this.position[0] * blockSize + radius;
-            const y = this.position[1] * blockSize + radius;
+            const [x, y] = this.position;
+
             ctx.save();
-            if(this.bad === 1){
+            if (this.bad === 1) {
                 ctx.fillStyle = "#210124";
             } else {
                 ctx.fillStyle = "red";
             }
             ctx.beginPath();
-            ctx.arc(x,y, radius, 0, Math.PI*2, true);
+            ctx.arc(x * blockSize + radius, y * blockSize + radius, radius, 0, Math.PI * 2, true);
             ctx.fill();
             ctx.restore();
-        };
-        this.badApple = function(){
+        }
+
+        badApple() {
             this.bad = Math.floor(Math.random() * 2);
-            if(this.bad === 1){
-                setTimeout(()=>{
+            if (this.bad === 1) {
+                setTimeout(() => {
                     this.bad = 0;
                 }, Math.floor(Math.random() * 4000));
             } else {
-                setTimeout(()=>{
+                setTimeout(() => {
                     this.bad = 1;
-                    setTimeout(()=>{
+                    setTimeout(() => {
                         this.bad = 0;
                     }, Math.floor(Math.random() * 4000));
                 }, Math.floor(Math.random() * 4000));
             }
             return this.bad;
         }
-        this.setNewPosition = function(){
+
+        setNewPosition() {
             const newX = Math.round(Math.random() * (widthInBlocks - 1));
             const newY = Math.round(Math.random() * (heightInBlocks - 1));
-            this.position = [newX,newY];
+            this.position = [newX, newY];
             this.bad = this.badApple();
-        };
-        this.isOnSnake = function(snakeToCheck){
-            let isOnSnake = false;
-            for(let i = 0;i < snakeToCheck.body.length;i++){
-                isOnSnake = this.position[0] === snakeToCheck.body[i][0] && this.position[1] === snakeToCheck.body[i][1];
+        }
+
+        isOnSnake(snakeToCheck) {
+            for (let i = 0; i < snakeToCheck.body.length; i++) {
+                if (this.position[0] === snakeToCheck.body[i][0] && this.position[1] === snakeToCheck.body[i][1]) {
+                    return true;
+                }
             }
-            return isOnSnake;
-        };
+            return false;
+        }
     }
+
 
     window.addEventListener('keyup', function (e){
         let direction;
