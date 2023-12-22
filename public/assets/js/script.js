@@ -110,7 +110,7 @@ window.onload = function (){
     function write(text, font, position){
         ctx.save();
         ctx.font = font;
-        ctx.fillStyle = 'black';
+        ctx.fillStyle = '#210124';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.strokeStyle = 'white';
@@ -253,9 +253,9 @@ window.onload = function (){
             const y = this.position[1] * blockSize + radius;
             ctx.save();
             if(this.bad === 1){
-                ctx.fillStyle = "black";
+                ctx.fillStyle = "#210124";
             } else {
-                ctx.fillStyle = "red";
+                ctx.fillStyle = "#750D37";
             }
             ctx.beginPath();
             ctx.arc(x,y, radius, 0, Math.PI*2, true);
