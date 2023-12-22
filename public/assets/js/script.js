@@ -5,11 +5,12 @@ window.onload = function (){
         document.getElementById("intro").classList.add("hidden");
     });
     // end:intro
-
+    // begin:quit
     document.querySelector("#btn-quit").addEventListener("click", function(e){
         e.preventDefault();
         document.getElementById("intro").classList.remove("hidden");
     });
+    // end:quit
 
     //begin::clock
     const clock = document.querySelector('#clock');
