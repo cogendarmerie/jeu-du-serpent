@@ -149,7 +149,7 @@ window.onload = function (){
     }
 
     function speedUp(){
-        speed /= 1.1;
+        speed *= 1.1;
     }
 
     function drawBlock(ctx, position){
