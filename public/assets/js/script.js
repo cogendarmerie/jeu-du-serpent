@@ -6,6 +6,11 @@ window.onload = function (){
     });
     // end:intro
 
+    document.querySelector("#btn-quit").addEventListener("click", function(e){
+        e.preventDefault();
+        document.getElementById("intro").classList.remove("hidden");
+    });
+
     //begin::clock
     const clock = document.querySelector('#clock');
     clock.innerHTML = new Date().toLocaleTimeString();
